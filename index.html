@@ -14,427 +14,502 @@
     <!-- Chart.js for data visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <!-- ApexCharts for advanced visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
     <!-- Custom Styles -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=SF+Pro+Display:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+        :root {
+            --blue-primary: #007AFF;
+            --blue-secondary: #5AC8FA;
+            --purple-primary: #AF52DE;
+            --purple-secondary: #BF5AF2;
+            --green-primary: #34C759;
+            --green-secondary: #30D158;
+            --orange-primary: #FF9F0A;
+            --orange-secondary: #FF9500;
+            --pink-primary: #FF2D92;
+            --pink-secondary: #FF375F;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            font-family: 'SF Pro Display', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(ellipse at top, #0a0a0a 0%, #1a1a1a 50%, #000000 100%);
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        .gradient-border {
+        .apple-blur {
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            background: rgba(17, 17, 17, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glass-card {
+            background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.08) 0%,
+                rgba(255, 255, 255, 0.03) 100%
+            );
+            backdrop-filter: blur(30px) saturate(200%);
+            -webkit-backdrop-filter: blur(30px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             position: relative;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .gradient-border::before {
+        .glass-card::before {
             content: '';
             position: absolute;
             inset: 0;
-            padding: 2px;
-            background: linear-gradient(45deg,
-                rgba(0, 123, 255, 0.3),
-                rgba(255, 0, 150, 0.3),
-                rgba(0, 255, 123, 0.3),
-                rgba(255, 123, 0, 0.3)
-            );
             border-radius: inherit;
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.1) 0%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.05) 100%
+            );
+            mask: linear-gradient(black, black) content-box, linear-gradient(black, black);
             mask-composite: xor;
             -webkit-mask-composite: xor;
+            padding: 1px;
         }
 
-        .tech-glow {
+        /* Apple-style glows - each color maintains its own transparency */
+        .blue-glow {
             box-shadow:
-                0 0 20px rgba(0, 123, 255, 0.2),
-                0 0 40px rgba(0, 123, 255, 0.1),
+                0 0 40px rgba(0, 122, 255, 0.15),
+                0 0 80px rgba(0, 122, 255, 0.08),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
-        .pink-glow {
+        .purple-glow {
             box-shadow:
-                0 0 20px rgba(255, 0, 150, 0.2),
-                0 0 40px rgba(255, 0, 150, 0.1),
+                0 0 40px rgba(175, 82, 222, 0.15),
+                0 0 80px rgba(175, 82, 222, 0.08),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .green-glow {
             box-shadow:
-                0 0 20px rgba(0, 255, 123, 0.2),
-                0 0 40px rgba(0, 255, 123, 0.1),
+                0 0 40px rgba(52, 199, 89, 0.15),
+                0 0 80px rgba(52, 199, 89, 0.08),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .orange-glow {
             box-shadow:
-                0 0 20px rgba(255, 123, 0, 0.2),
-                0 0 40px rgba(255, 123, 0, 0.1),
+                0 0 40px rgba(255, 159, 10, 0.15),
+                0 0 80px rgba(255, 159, 10, 0.08),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
-        .hero-text {
-            background: linear-gradient(135deg, #ffffff, #e0e7ff);
+        .pink-glow {
+            box-shadow:
+                0 0 40px rgba(255, 45, 146, 0.15),
+                0 0 80px rgba(255, 45, 146, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        /* Hero text styles */
+        .hero-title {
+            background: linear-gradient(135deg, #ffffff 0%, #e5e7eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+        }
+
+        .accent-gradient {
+            background: linear-gradient(135deg, var(--blue-primary), var(--purple-primary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .accent-text {
-            background: linear-gradient(135deg, #007bff, #00ff7b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .bento-grid {
+        /* Bento Grid Layout */
+        .bento-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            max-width: 1400px;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1rem;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .bento-container {
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
         }
 
         @media (min-width: 1024px) {
-            .bento-grid {
-                grid-template-columns: repeat(4, 1fr);
-                grid-template-rows: repeat(4, minmax(200px, auto));
-            }
-
-            .bento-large {
-                grid-column: span 2;
-                grid-row: span 2;
-            }
-
-            .bento-wide {
-                grid-column: span 2;
-            }
-
-            .bento-tall {
-                grid-row: span 2;
+            .bento-container {
+                max-width: 1400px;
+                gap: 2rem;
+                padding: 2rem;
             }
         }
 
         @media (min-width: 1920px) {
-            .bento-grid {
+            .bento-container {
                 max-width: 1800px;
-                grid-template-columns: repeat(6, 1fr);
-                gap: 2rem;
-            }
-
-            .bento-xl {
-                grid-column: span 3;
-                grid-row: span 2;
+                gap: 2.5rem;
+                padding: 3rem;
             }
         }
 
-        .hover-lift {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .hover-lift:hover {
-            transform: translateY(-8px);
-        }
-
-        .skill-bar {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
+        /* Bento Grid Items */
+        .bento-item {
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            border-radius: 24px;
             overflow: hidden;
         }
 
-        .skill-progress {
-            height: 100%;
-            background: linear-gradient(90deg, var(--skill-color), var(--skill-color-end));
-            border-radius: 4px;
-            animation: fillBar 2s ease-out;
+        .bento-item:hover {
+            transform: translateY(-8px);
         }
 
-        @keyframes fillBar {
-            from { width: 0%; }
+        /* Responsive grid spans */
+        .hero-card { grid-column: span 12; grid-row: span 2; }
+        .profile-card { grid-column: span 12; grid-row: span 3; }
+        .timeline-card { grid-column: span 12; grid-row: span 4; }
+        .skills-chart { grid-column: span 12; grid-row: span 3; }
+        .tech-stack { grid-column: span 12; grid-row: span 2; }
+        .stats-card { grid-column: span 6; grid-row: span 2; }
+        .performance-card { grid-column: span 6; grid-row: span 2; }
+        .contact-card { grid-column: span 12; grid-row: span 2; }
+        .achievement-card { grid-column: span 6; grid-row: span 2; }
+        .code-activity { grid-column: span 6; grid-row: span 2; }
+
+        @media (min-width: 768px) {
+            .profile-card { grid-column: span 8; }
+            .timeline-card { grid-column: span 4; }
+            .skills-chart { grid-column: span 8; }
+            .tech-stack { grid-column: span 4; }
+            .contact-card { grid-column: span 8; }
+            .achievement-card { grid-column: span 4; }
         }
 
-        .floating {
-            animation: floating 3s ease-in-out infinite;
+        @media (min-width: 1024px) {
+            .profile-card { grid-column: span 6; }
+            .timeline-card { grid-column: span 3; }
+            .skills-chart { grid-column: span 6; }
+            .tech-stack { grid-column: span 3; }
+            .stats-card { grid-column: span 3; }
+            .performance-card { grid-column: span 3; }
+            .contact-card { grid-column: span 6; }
+            .achievement-card { grid-column: span 3; }
+            .code-activity { grid-column: span 3; }
         }
 
-        @keyframes floating {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+        @media (min-width: 1920px) {
+            .hero-card { grid-row: span 2; }
+            .profile-card { grid-column: span 4; grid-row: span 4; }
+            .timeline-card { grid-column: span 2; grid-row: span 4; }
+            .skills-chart { grid-column: span 4; grid-row: span 3; }
+            .tech-stack { grid-column: span 2; grid-row: span 3; }
         }
 
+        /* Animation classes */
+        .fade-in {
+            animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Chart container */
         .chart-container {
             position: relative;
             height: 200px;
             width: 100%;
         }
+
+        /* Floating animation */
+        .floating {
+            animation: floating 6s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Progress bars */
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-circle {
+            stroke-dasharray: 251.2;
+            stroke-dashoffset: 251.2;
+            animation: progress 2s ease-in-out forwards;
+        }
+
+        @keyframes progress {
+            to {
+                stroke-dashoffset: calc(251.2 - (251.2 * var(--progress)) / 100);
+            }
+        }
+
+        /* Apple-style buttons */
+        .apple-button {
+            background: linear-gradient(135deg, var(--blue-primary), var(--blue-secondary));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            padding: 12px 24px;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 4px 16px rgba(0, 122, 255, 0.3);
+        }
+
+        .apple-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0, 122, 255, 0.4);
+        }
+
+        /* Minimalist icons */
+        .minimal-icon {
+            width: 24px;
+            height: 24px;
+            stroke-width: 1.5px;
+        }
+
+        /* Code block styling */
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Responsive text sizes */
+        @media (min-width: 1920px) {
+            .hero-title {
+                font-size: 5rem;
+            }
+        }
     </style>
 </head>
 <body class="text-white">
-    <div class="min-h-screen p-4 lg:p-8">
-        <!-- Hero Section -->
-        <div class="text-center mb-12">
-            <h1 class="text-6xl lg:text-8xl font-black hero-text mb-4 tracking-tight">俊哥</h1>
-            <p class="text-xl lg:text-2xl text-gray-300 mb-2">Senior Engineering Leader</p>
-            <p class="text-lg text-gray-400">前大厂工程师 | Tech Innovation Enthusiast</p>
+    <!-- Hero Section -->
+    <div class="text-center py-16 px-4">
+        <h1 class="hero-title text-5xl md:text-7xl lg:text-8xl mb-6 tracking-tight">俊哥</h1>
+        <div class="space-y-2">
+            <p class="text-2xl md:text-3xl text-gray-300 font-light">Senior Engineering Leader</p>
+            <p class="text-lg md:text-xl text-gray-400">前大厂工程师 | Tech Innovation Enthusiast</p>
+        </div>
+    </div>
+
+    <!-- Bento Grid Layout -->
+    <div class="bento-container">
+        <!-- Main Profile Card -->
+        <div class="bento-item profile-card glass-card p-8 blue-glow fade-in">
+            <div class="flex flex-col h-full justify-between">
+                <div>
+                    <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mb-6 flex items-center justify-center">
+                        <i class="fas fa-rocket text-2xl text-white"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold mb-4 text-white">关于我</h2>
+                    <p class="text-gray-300 text-lg leading-relaxed mb-6">
+                        资深技术领导者，专注于构建可扩展的企业级应用。拥有丰富的全栈开发经验和团队管理能力，致力于用技术创造价值。
+                    </p>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-map-marker-alt text-blue-400"></i>
+                            <span class="text-gray-300">Beijing, China</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-envelope text-blue-400"></i>
+                            <span class="text-gray-300">jun@example.com</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-calendar-alt text-blue-400"></i>
+                            <span class="text-gray-300">8+ Years Experience</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="apple-button mt-8 w-full">
+                    <span class="flex items-center justify-center gap-2">
+                        <i class="fas fa-paper-plane"></i>
+                        联系我 Get In Touch
+                    </span>
+                </button>
+            </div>
         </div>
 
-        <!-- Bento Grid Layout -->
-        <div class="bento-grid p-4">
-            <!-- Main Profile Card - Large -->
-            <div class="bento-large bento-xl gradient-border rounded-3xl p-8 hover-lift tech-glow">
-                <div class="flex flex-col h-full justify-between">
-                    <div>
-                        <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mb-6 flex items-center justify-center text-3xl">
-                            <i class="fas fa-user-astronaut"></i>
-                        </div>
-                        <h2 class="text-3xl font-bold mb-4">关于我</h2>
-                        <p class="text-gray-300 text-lg leading-relaxed mb-6">
-                            资深技术领导者，专注于构建可扩展的企业级应用。拥有丰富的全栈开发经验和团队管理能力。
-                        </p>
-                        <div class="space-y-2">
-                            <div class="flex items-center gap-3">
-                                <i class="fas fa-map-marker-alt text-blue-400"></i>
-                                <span class="text-gray-300">Location: 北京</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <i class="fas fa-envelope text-blue-400"></i>
-                                <span class="text-gray-300">Contact: jun@example.com</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-6">
-                        <button class="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-purple-700 transition-all">
-                            联系我 Connect
-                        </button>
-                    </div>
+        <!-- Experience Timeline -->
+        <div class="bento-item timeline-card glass-card p-6 purple-glow fade-in" style="animation-delay: 0.1s;">
+            <h3 class="text-2xl font-bold mb-6 text-white">工作经历</h3>
+            <div class="space-y-6">
+                <div class="relative pl-8 border-l-2 border-purple-400">
+                    <div class="absolute -left-3 top-2 w-6 h-6 bg-purple-500 rounded-full border-2 border-purple-300"></div>
+                    <h4 class="font-bold text-lg text-white">技术总监</h4>
+                    <p class="text-purple-300 text-sm font-medium">Tech Director</p>
+                    <p class="text-gray-400 text-sm">2022 - Present</p>
+                    <p class="text-gray-300 text-sm mt-2">领导20+人技术团队，负责技术架构设计</p>
+                </div>
+                <div class="relative pl-8 border-l-2 border-purple-400">
+                    <div class="absolute -left-3 top-2 w-6 h-6 bg-purple-400 rounded-full border-2 border-purple-300"></div>
+                    <h4 class="font-bold text-white">高级工程师</h4>
+                    <p class="text-purple-300 text-sm font-medium">Senior Engineer</p>
+                    <p class="text-gray-400 text-sm">2018 - 2022</p>
+                    <p class="text-gray-300 text-sm mt-2">核心系统架构设计与优化</p>
+                </div>
+                <div class="relative pl-8 border-l-2 border-purple-400">
+                    <div class="absolute -left-3 top-2 w-6 h-6 bg-purple-300 rounded-full border-2 border-purple-300"></div>
+                    <h4 class="font-bold text-white">软件工程师</h4>
+                    <p class="text-purple-300 text-sm font-medium">Software Engineer</p>
+                    <p class="text-gray-400 text-sm">2015 - 2018</p>
+                    <p class="text-gray-300 text-sm mt-2">全栈开发，前后端技术专家</p>
                 </div>
             </div>
+        </div>
 
-            <!-- Experience Timeline -->
-            <div class="bento-tall gradient-border rounded-3xl p-6 hover-lift pink-glow">
-                <h3 class="text-2xl font-bold mb-6">工作经历</h3>
-                <div class="space-y-6">
-                    <div class="relative pl-6 border-l-2 border-pink-500">
-                        <div class="absolute -left-2 top-0 w-4 h-4 bg-pink-500 rounded-full"></div>
-                        <h4 class="font-semibold text-lg">技术总监</h4>
-                        <p class="text-pink-400 text-sm">Tech Lead</p>
-                        <p class="text-gray-400 text-sm">2022 - Present</p>
-                        <p class="text-gray-300 text-sm mt-2">领导20+人技术团队</p>
-                    </div>
-                    <div class="relative pl-6 border-l-2 border-pink-500">
-                        <div class="absolute -left-2 top-0 w-4 h-4 bg-pink-400 rounded-full"></div>
-                        <h4 class="font-semibold">高级工程师</h4>
-                        <p class="text-pink-400 text-sm">Senior Engineer</p>
-                        <p class="text-gray-400 text-sm">2018 - 2022</p>
-                        <p class="text-gray-300 text-sm mt-2">核心系统架构设计</p>
-                    </div>
-                    <div class="relative pl-6 border-l-2 border-pink-500">
-                        <div class="absolute -left-2 top-0 w-4 h-4 bg-pink-300 rounded-full"></div>
-                        <h4 class="font-semibold">软件工程师</h4>
-                        <p class="text-pink-400 text-sm">Software Engineer</p>
-                        <p class="text-gray-400 text-sm">2015 - 2018</p>
-                        <p class="text-gray-300 text-sm mt-2">全栈开发专家</p>
-                    </div>
+        <!-- Skills Chart -->
+        <div class="bento-item skills-chart glass-card p-6 green-glow fade-in" style="animation-delay: 0.2s;">
+            <h3 class="text-2xl font-bold mb-6 text-white">技能分布</h3>
+            <div class="chart-container">
+                <canvas id="skillsRadarChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="bento-item tech-stack glass-card p-6 orange-glow fade-in" style="animation-delay: 0.3s;">
+            <h3 class="text-xl font-bold mb-6 text-white">技术栈</h3>
+            <div class="grid grid-cols-1 gap-4">
+                <div class="bg-gradient-to-r from-orange-500/20 to-red-500/20 p-4 rounded-xl border border-orange-500/20">
+                    <i class="fab fa-js-square text-yellow-400 text-2xl mb-2"></i>
+                    <p class="font-semibold text-white">JavaScript</p>
+                    <p class="text-xs text-gray-400">ES6+ & TypeScript</p>
+                </div>
+                <div class="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 p-4 rounded-xl border border-blue-500/20">
+                    <i class="fab fa-react text-blue-400 text-2xl mb-2"></i>
+                    <p class="font-semibold text-white">React</p>
+                    <p class="text-xs text-gray-400">Hooks & Next.js</p>
+                </div>
+                <div class="bg-gradient-to-r from-green-500/20 to-emerald-500/20 p-4 rounded-xl border border-green-500/20">
+                    <i class="fab fa-node-js text-green-400 text-2xl mb-2"></i>
+                    <p class="font-semibold text-white">Node.js</p>
+                    <p class="text-xs text-gray-400">Express & NestJS</p>
+                </div>
+                <div class="bg-gradient-to-r from-purple-500/20 to-pink-500/20 p-4 rounded-xl border border-purple-500/20">
+                    <i class="fas fa-database text-purple-400 text-2xl mb-2"></i>
+                    <p class="font-semibold text-white">Database</p>
+                    <p class="text-xs text-gray-400">PostgreSQL & Redis</p>
                 </div>
             </div>
+        </div>
 
-            <!-- Skills Chart -->
-            <div class="bento-wide gradient-border rounded-3xl p-6 hover-lift green-glow">
-                <h3 class="text-2xl font-bold mb-6">技能分布</h3>
-                <div class="chart-container">
-                    <canvas id="skillsChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Tech Stack -->
-            <div class="gradient-border rounded-3xl p-6 hover-lift orange-glow">
-                <h3 class="text-xl font-bold mb-6">技术栈</h3>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-gradient-to-br from-orange-500/20 to-red-500/20 p-4 rounded-xl">
-                        <i class="fab fa-js-square text-yellow-400 text-2xl mb-2"></i>
-                        <p class="text-sm font-semibold">JavaScript</p>
-                        <p class="text-xs text-gray-400">ES6+</p>
-                    </div>
-                    <div class="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 p-4 rounded-xl">
-                        <i class="fab fa-react text-blue-400 text-2xl mb-2"></i>
-                        <p class="text-sm font-semibold">React</p>
-                        <p class="text-xs text-gray-400">Hooks & Redux</p>
-                    </div>
-                    <div class="bg-gradient-to-br from-green-500/20 to-emerald-500/20 p-4 rounded-xl">
-                        <i class="fab fa-node-js text-green-400 text-2xl mb-2"></i>
-                        <p class="text-sm font-semibold">Node.js</p>
-                        <p class="text-xs text-gray-400">Express & NestJS</p>
-                    </div>
-                    <div class="bg-gradient-to-br from-purple-500/20 to-pink-500/20 p-4 rounded-xl">
-                        <i class="fas fa-database text-purple-400 text-2xl mb-2"></i>
-                        <p class="text-sm font-semibold">Database</p>
-                        <p class="text-xs text-gray-400">MySQL & MongoDB</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Projects Stats -->
-            <div class="gradient-border rounded-3xl p-6 hover-lift tech-glow">
-                <h3 class="text-xl font-bold mb-6">项目统计</h3>
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-300">完成项目</span>
-                        <span class="text-2xl font-bold accent-text">50+</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-300">代码贡献</span>
-                        <span class="text-2xl font-bold accent-text">100K+</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-300">团队规模</span>
-                        <span class="text-2xl font-bold accent-text">20人</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Performance Metrics -->
-            <div class="gradient-border rounded-3xl p-6 hover-lift pink-glow">
-                <h3 class="text-xl font-bold mb-6">性能指标</h3>
-                <div class="chart-container">
-                    <canvas id="performanceChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Contact & Social -->
-            <div class="bento-wide gradient-border rounded-3xl p-6 hover-lift green-glow">
-                <h3 class="text-2xl font-bold mb-6">联系方式</h3>
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <a href="#" class="bg-gradient-to-br from-blue-500/20 to-blue-600/20 p-4 rounded-xl text-center hover:from-blue-500/30 hover:to-blue-600/30 transition-all">
-                        <i class="fab fa-linkedin text-3xl text-blue-400 mb-2"></i>
-                        <p class="text-sm font-semibold">LinkedIn</p>
-                    </a>
-                    <a href="#" class="bg-gradient-to-br from-gray-500/20 to-gray-600/20 p-4 rounded-xl text-center hover:from-gray-500/30 hover:to-gray-600/30 transition-all">
-                        <i class="fab fa-github text-3xl text-gray-400 mb-2"></i>
-                        <p class="text-sm font-semibold">GitHub</p>
-                    </a>
-                    <a href="#" class="bg-gradient-to-br from-green-500/20 to-green-600/20 p-4 rounded-xl text-center hover:from-green-500/30 hover:to-green-600/30 transition-all">
-                        <i class="fab fa-weixin text-3xl text-green-400 mb-2"></i>
-                        <p class="text-sm font-semibold">微信</p>
-                    </a>
-                    <a href="#" class="bg-gradient-to-br from-red-500/20 to-red-600/20 p-4 rounded-xl text-center hover:from-red-500/30 hover:to-red-600/30 transition-all">
-                        <i class="fas fa-envelope text-3xl text-red-400 mb-2"></i>
-                        <p class="text-sm font-semibold">Email</p>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Achievement -->
-            <div class="gradient-border rounded-3xl p-6 hover-lift orange-glow floating">
+        <!-- Project Stats -->
+        <div class="bento-item stats-card glass-card p-6 blue-glow fade-in" style="animation-delay: 0.4s;">
+            <h3 class="text-xl font-bold mb-6 text-white">项目统计</h3>
+            <div class="space-y-6">
                 <div class="text-center">
-                    <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-                        <i class="fas fa-trophy text-2xl text-white"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2">最佳团队奖</h3>
-                    <p class="text-sm text-gray-400">2023年度技术创新</p>
-                    <p class="text-xs text-gray-500 mt-2">Innovation Excellence</p>
+                    <div class="text-4xl font-bold accent-gradient mb-2">50+</div>
+                    <p class="text-gray-300 text-sm">Completed Projects</p>
+                    <p class="text-gray-400 text-xs">完成项目</p>
                 </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold accent-gradient mb-2">100K+</div>
+                    <p class="text-gray-300 text-sm">Lines of Code</p>
+                    <p class="text-gray-400 text-xs">代码贡献</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold accent-gradient mb-2">20</div>
+                    <p class="text-gray-300 text-sm">Team Members</p>
+                    <p class="text-gray-400 text-xs">团队规模</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="bento-item performance-card glass-card p-6 pink-glow fade-in" style="animation-delay: 0.5s;">
+            <h3 class="text-xl font-bold mb-6 text-white">性能指标</h3>
+            <div id="performanceChart" class="w-full h-48"></div>
+        </div>
+
+        <!-- Contact & Social -->
+        <div class="bento-item contact-card glass-card p-6 green-glow fade-in" style="animation-delay: 0.6s;">
+            <h3 class="text-2xl font-bold mb-6 text-white">联系方式</h3>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <a href="#" class="group bg-blue-500/10 hover:bg-blue-500/20 p-4 rounded-xl text-center transition-all border border-blue-500/20">
+                    <i class="fab fa-linkedin text-2xl text-blue-400 mb-3 group-hover:scale-110 transition-transform"></i>
+                    <p class="text-sm font-semibold text-white">LinkedIn</p>
+                </a>
+                <a href="#" class="group bg-gray-500/10 hover:bg-gray-500/20 p-4 rounded-xl text-center transition-all border border-gray-500/20">
+                    <i class="fab fa-github text-2xl text-gray-400 mb-3 group-hover:scale-110 transition-transform"></i>
+                    <p class="text-sm font-semibold text-white">GitHub</p>
+                </a>
+                <a href="#" class="group bg-green-500/10 hover:bg-green-500/20 p-4 rounded-xl text-center transition-all border border-green-500/20">
+                    <i class="fab fa-weixin text-2xl text-green-400 mb-3 group-hover:scale-110 transition-transform"></i>
+                    <p class="text-sm font-semibold text-white">WeChat</p>
+                </a>
+                <a href="#" class="group bg-red-500/10 hover:bg-red-500/20 p-4 rounded-xl text-center transition-all border border-red-500/20">
+                    <i class="fas fa-envelope text-2xl text-red-400 mb-3 group-hover:scale-110 transition-transform"></i>
+                    <p class="text-sm font-semibold text-white">Email</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Achievement Card -->
+        <div class="bento-item achievement-card glass-card p-6 orange-glow fade-in floating" style="animation-delay: 0.7s;">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                    <i class="fas fa-trophy text-2xl text-white"></i>
+                </div>
+                <h3 class="text-lg font-bold mb-2 text-white">最佳团队奖</h3>
+                <p class="text-gray-300 text-sm">Best Team Award</p>
+                <p class="text-gray-400 text-xs mt-2">2023年度技术创新</p>
+            </div>
+        </div>
+
+        <!-- Code Activity -->
+        <div class="bento-item code-activity glass-card p-6 purple-glow fade-in" style="animation-delay: 0.8s;">
+            <h3 class="text-xl font-bold mb-4 text-white">代码活跃度</h3>
+            <div class="space-y-4">
+                <div class="bg-black/30 rounded-lg p-4 border border-purple-500/20">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-gray-300 text-sm">Today</span>
+                        <span class="text-purple-400 text-sm font-bold">24 commits</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full" style="width: 85%"></div>
+                    </div>
+                </div>
+                <div class="bg-black/30 rounded-lg p-4 border border-purple-500/20">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-gray-300 text-sm">This Week</span>
+                        <span class="text-purple-400 text-sm font-bold">156 commits</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full" style="width: 92%"></div>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-400 mt-4">Streak: 45 days 🔥</p>
             </div>
         </div>
     </div>
 
     <script>
-        // Skills Chart
-        const ctx1 = document.getElementById('skillsChart').getContext('2d');
-        new Chart(ctx1, {
-            type: 'doughnut',
-            data: {
-                labels: ['前端开发', '后端开发', '数据库', '运维部署', '团队管理'],
-                datasets: [{
-                    data: [30, 25, 20, 15, 10],
-                    backgroundColor: [
-                        'rgba(0, 123, 255, 0.8)',
-                        'rgba(255, 0, 150, 0.8)',
-                        'rgba(0, 255, 123, 0.8)',
-                        'rgba(255, 123, 0, 0.8)',
-                        'rgba(123, 0, 255, 0.8)'
-                    ],
-                    borderColor: [
-                        'rgba(0, 123, 255, 1)',
-                        'rgba(255, 0, 150, 1)',
-                        'rgba(0, 255, 123, 1)',
-                        'rgba(255, 123, 0, 1)',
-                        'rgba(123, 0, 255, 1)'
-                    ],
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            color: '#e5e7eb',
-                            font: {
-                                size: 12
-                            },
-                            padding: 15
-                        }
-                    }
-                }
-            }
-        });
-
-        // Performance Chart
-        const ctx2 = document.getElementById('performanceChart').getContext('2d');
-        new Chart(ctx2, {
-            type: 'line',
-            data: {
-                labels: ['Q1', 'Q2', 'Q3', 'Q4'],
-                datasets: [{
-                    label: '项目完成率',
-                    data: [85, 92, 88, 95],
-                    borderColor: 'rgba(255, 0, 150, 1)',
-                    backgroundColor: 'rgba(255, 0, 150, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: '#e5e7eb'
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100,
-                        ticks: {
-                            color: '#9ca3af'
-                        },
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        }
-                    },
-                    x: {
-                        ticks: {
-                            color: '#9ca3af'
-                        },
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        }
-                    }
-                }
-            }
-        });
-
-        // Add smooth scrolling and intersection observer for animations
+        // Initialize fade-in animations
         document.addEventListener('DOMContentLoaded', function() {
             const observerOptions = {
                 threshold: 0.1,
@@ -444,19 +519,179 @@
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
+                        entry.target.style.animationPlayState = 'running';
                     }
                 });
             }, observerOptions);
 
-            document.querySelectorAll('.hover-lift').forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            document.querySelectorAll('.fade-in').forEach(el => {
+                el.style.animationPlayState = 'paused';
                 observer.observe(el);
             });
         });
+
+        // Skills Radar Chart
+        const ctx1 = document.getElementById('skillsRadarChart');
+        if (ctx1) {
+            new Chart(ctx1.getContext('2d'), {
+                type: 'radar',
+                data: {
+                    labels: ['前端开发', '后端开发', '数据库设计', '系统架构', '团队管理', '项目管理'],
+                    datasets: [{
+                        label: '技能水平',
+                        data: [95, 88, 82, 90, 85, 78],
+                        backgroundColor: 'rgba(52, 199, 89, 0.1)',
+                        borderColor: 'rgba(52, 199, 89, 0.8)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(52, 199, 89, 1)',
+                        pointBorderColor: '#ffffff',
+                        pointHoverBackgroundColor: '#ffffff',
+                        pointHoverBorderColor: 'rgba(52, 199, 89, 1)',
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.4)',
+                                backdropColor: 'transparent',
+                                font: {
+                                    size: 10
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            pointLabels: {
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                font: {
+                                    size: 11,
+                                    weight: '500'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Performance Chart using ApexCharts
+        const performanceOptions = {
+            series: [{
+                name: '项目完成率',
+                data: [85, 92, 88, 95, 89, 96]
+            }],
+            chart: {
+                type: 'area',
+                height: '100%',
+                sparkline: {
+                    enabled: true
+                },
+                background: 'transparent',
+                toolbar: {
+                    show: false
+                }
+            },
+            colors: ['#FF2D92'],
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shade: 'dark',
+                    type: 'vertical',
+                    shadeIntensity: 0.5,
+                    gradientToColors: ['#FF375F'],
+                    inverseColors: false,
+                    opacityFrom: 0.8,
+                    opacityTo: 0.1
+                }
+            },
+            stroke: {
+                width: 3,
+                curve: 'smooth'
+            },
+            grid: {
+                show: false
+            },
+            xaxis: {
+                labels: {
+                    show: false
+                },
+                axisBorder: {
+                    show: false
+                },
+                axisTicks: {
+                    show: false
+                }
+            },
+            yaxis: {
+                labels: {
+                    show: false
+                }
+            },
+            tooltip: {
+                theme: 'dark',
+                style: {
+                    fontSize: '12px'
+                }
+            }
+        };
+
+        const performanceChart = new ApexCharts(document.querySelector("#performanceChart"), performanceOptions);
+        performanceChart.render();
+
+        // Add smooth hover effects
+        document.querySelectorAll('.bento-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Dynamic background particles
+        function createParticles() {
+            const particleContainer = document.createElement('div');
+            particleContainer.style.position = 'fixed';
+            particleContainer.style.top = '0';
+            particleContainer.style.left = '0';
+            particleContainer.style.width = '100%';
+            particleContainer.style.height = '100%';
+            particleContainer.style.pointerEvents = 'none';
+            particleContainer.style.zIndex = '-1';
+
+            document.body.appendChild(particleContainer);
+
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = '2px';
+                particle.style.height = '2px';
+                particle.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                particle.style.borderRadius = '50%';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animation = `float ${3 + Math.random() * 4}s ease-in-out infinite`;
+                particle.style.animationDelay = Math.random() * 2 + 's';
+
+                particleContainer.appendChild(particle);
+            }
+        }
+
+        // Initialize particles
+        createParticles();
     </script>
 </body>
 </html>
